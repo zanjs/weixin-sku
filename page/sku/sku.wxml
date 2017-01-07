@@ -1,0 +1,16 @@
+<view class="">
+  <block wx:for="{{SkuClasses}}" wx:key="index" >
+      <view class="ptitle">
+        {{item.TypeName}} {{index}}
+        <view class="skus-wrap">
+          <block wx:for="{{item.SkuProperties}}" wx:for-item="y" wx:key="PropId"  wx:for-index="idy">
+              <button class="sku-hub-{{y.status}}" data-status="{{y.status}}" data-id="{{y.PropId}}" data-pindex="{{index}}" data-index="{{idy}}"
+               data-y="{{idy}}" bindtap="skuClick">{{y.PropertieName}}</button>
+
+              
+          </block>
+        </view>
+      </view>
+  </block>
+
+</view>
