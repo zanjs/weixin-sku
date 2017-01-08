@@ -636,6 +636,8 @@ export default {
         let selectedIds = vm.getSelect(SkuClasses)
         let selectedIdsLeng = selectedIds.length
 
+        
+
         for (var i = 0; i < noSelectIds.length; i++) {
 
             let item = noSelectIds[i]
