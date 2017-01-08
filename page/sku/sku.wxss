@@ -22,7 +22,12 @@ button{
   margin: 5px;
   font-size: 12px;
 }
-.ison,.sku-hub-2{
+.sku-hub-2{
   color: #FFF;
   background-color: saddlebrown;
+}
+
+.sku-hub-0{
+  color: #333;
+  background-color: #999;
 }

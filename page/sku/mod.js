@@ -1,4 +1,3 @@
-
 'use strict';
 
 
@@ -135,6 +134,7 @@ export default {
 
     /**
      * 更新 SKU 选择状态
+     * status = 2 选中: 1 可选 ：0 不可选
      * 
      * @param {any} SkuClasses
      * @param {any} x
@@ -145,18 +145,21 @@ export default {
         let vm = this
         let arr = SkuClasses
         let tags = arr[x].SkuProperties
-        let leng = tags.length
-        let ison = tags[y].ison
-        for (var i = 0; i < leng; i++) {
+        let len = tags.length
+        let tag = tags[y]
+
+        for (var i = 0; i < len; i++) {
+
             let item = tags[i]
-            if (i == y) {
-                item.status = 2
-            } else {
+
+            if (i == y && item.status == 1) {
+                    item.status = 2
+            }else{
                 item.status = 1
             }
+
         }
 
-        arr[x].SkuProperties = tags
         return arr
     },
     /**
@@ -237,6 +240,12 @@ export default {
         }
         return id
     },
+    /**
+     * 获取未选中的节点
+     * 
+     * @param {any} SkuClasses
+     * @returns
+     */
     getSelectNo(SkuClasses) {
         let vm = this
         let arr = SkuClasses
@@ -247,10 +256,14 @@ export default {
             let item = arr[i].SkuProperties
             let newItem = vm.getSelectTagsNo(item)
             if (newItem.length) {
-                newArr.push(newItem)
+                newArr = newArr.concat(newItem)
             }
 
         }
+
+        newArr.sort(function (value1, value2) {
+            return parseInt(value1) - parseInt(value2);
+        })
 
         return newArr
 
@@ -262,7 +275,7 @@ export default {
         for (var i = 0; i < leng; i++) {
             let item = arr[i]
 
-            if (!item.ison) {
+            if (item.status != 2) {
 
                 id.push(item.PropId)
             }
@@ -614,20 +627,110 @@ export default {
      * @param {any} SKUResult
      * @returns
      */
-    clickJs2(clickPoId,selectedIds, SkuClasses, SKUResult) {
+    clickJs2(clickPoid, SkuClasses, SKUResult) {
         let vm = this
         let list = SkuClasses
         let leng = list.length
 
-        
+        let noSelectIds = vm.getSelectNo(SkuClasses)
+        let selectedIds = vm.getSelect(SkuClasses)
+        let selectedIdsLeng = selectedIds.length
 
-        
+        for (var i = 0; i < noSelectIds.length; i++) {
+
+            let item = noSelectIds[i]
+
+            let itemSplit = item.split(':')
+
+            let Pindex = itemSplit[0]
+            let index = itemSplit[1]
+
+            let SkuClassesItem = SkuClasses[Pindex].SkuProperties[index]
+
+            let getSelPoid = SkuClassesItem.PropId
+
+
+            let siblingsSelectedObj = vm.isxSelect(list[Pindex].SkuProperties)
+
+            let combinationAttrIds = []
+
+            if (siblingsSelectedObj) {
+
+                let siblingsSelectedObjId = siblingsSelectedObj.PropId
+
+                for (var y = 0; y < selectedIdsLeng; y++) {
+
+                    if (selectedIds[i] != siblingsSelectedObjId) {
+                        combinationAttrIds.push(selectedIds[y])
+                    }
+
+                }
+
+
+            } else {
+                combinationAttrIds = selectedIds.concat()
+            }
+
+            combinationAttrIds = combinationAttrIds.concat(getSelPoid)
+
+            combinationAttrIds.sort(function (value1, value2) {
+                return parseInt(value1) - parseInt(value2)
+            })
+
+            console.log(combinationAttrIds)
+
+            if (!SKUResult[combinationAttrIds.join(';')]) {
+                SkuClassesItem.status = 0
+            } else {
+                SkuClassesItem.status = 1
+            }
+
+
+        }
+
+
+        console.log(SkuClasses)
+
+
         return list
     },
-    getClickSelectPoId(pindex,index,SkuClasses){
+    /**
+     * 获取当前sku 选中
+     * 
+     * @param {any} skuarr
+     * @returns
+     */
+    isxSelect(skuarr) {
+        let leng = skuarr.length
+
+        let obj = false
+        for (var i = 0; i < leng; i++) {
+            let item = skuarr[i]
+            console.log(leng)
+            if (item.status == 2) {
+                obj = item
+            }
+
+        }
+
+        return obj
+    },
+    // /**
+    //  * 是否是同级
+    //  */
+    // getPindex(arr) {
+    //     let Pindex = false
+    //     let leng = arr.length
+
+    //     for (var i = 0; i < leng; i++) {
+    //         var item = arr[i]
+    //         Pindex = item.split(':')[0]
+    //     }
+    //     return Pindex
+    // },
+    getClickSelectPoId(SkuClasses, pindex, index) {
         let item = SkuClasses[pindex]
         return item.SkuProperties[index]
-        
     },
     /**
      * 获取用户操作输入的信息

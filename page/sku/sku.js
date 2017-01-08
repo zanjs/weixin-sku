@@ -162,21 +162,34 @@ Page({
     let price = vm.data.Price
     let pindex = api.event(event, 'pindex')
     let index = api.event(event, 'index')
+    let status = api.event(event, 'status')
 
+    if(status == 0){
+      return
+    }
 
     let SkuClasses = vm.data.SkuClasses
-
+    let SKUResult = vm.data.SKUResult
 
     
 
     let newSkuClasses = mod.updateSkuClasses(SkuClasses, pindex, index)
+    let clickPoid = mod.getClickSelectPoId(SkuClasses,pindex, index)
+
     let selectedIds = mod.getSelect(newSkuClasses)
+    let noSelectedIds = mod.getSelectNo(newSkuClasses)
+
+    let sk2 =  mod.clickJs2(clickPoid.PropId,newSkuClasses,SKUResult)
+
+
+    
 
     // let priceCount = mod.updateSkuPriceCount(selectedIds, vm.data.SKUResult)
 
     
-    let SKUResult = vm.data.SKUResult
-    newSkuClasses = mod.clickJs(selectedIds, newSkuClasses, SKUResult)
+    
+    // newSkuClasses = mod.clickJs(selectedIds, newSkuClasses, SKUResult)
+
     vm.setData({
       SkuClasses: newSkuClasses
     })
